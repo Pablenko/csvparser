@@ -2,11 +2,10 @@
 #include <thread>
 
 #include "report.hpp"
-#include "reader.hpp"
+#include "parser.hpp"
 
 int main()
 {
-    csv_parser::read();
     csv_parser::create_report();
 
     std::thread t([](){std::cout << "init";});
