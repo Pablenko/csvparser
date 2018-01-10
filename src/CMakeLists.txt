@@ -1,4 +1,4 @@
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -Wall")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -Wall -g")
 find_package (Threads)
 
 file(GLOB sources "*.hpp" "*.cpp")

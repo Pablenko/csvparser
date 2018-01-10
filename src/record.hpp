@@ -1,6 +1,7 @@
 #ifndef CSV_PARSER_RECORD_HPP
 #define CSV_PARSER_RECORD_HPP
 
+#include <ostream>
 #include <string>
 
 namespace csv_parser
@@ -33,6 +34,13 @@ inline bool operator==(const record& lhs, const record& rhs)
            lhs.dest_account == rhs.dest_account &&
            lhs.ammount == rhs.ammount;
 }
+
+inline bool operator!=(const record& lhs, const record& rhs)
+{
+    return not (lhs == rhs);
+}
+
+std::ostream& operator <<(std::ostream& str, const record& r);
 
 } // namespace csv_parser
 
