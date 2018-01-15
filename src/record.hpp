@@ -9,7 +9,7 @@ namespace csv_parser
 
 struct record
 {
-    struct record_date
+    struct r_date
     {
         unsigned int year;
         unsigned short month;
@@ -17,19 +17,30 @@ struct record
         unsigned short hour;
         unsigned short minutes;
         unsigned short seconds;
-    } date;
+    };
+    r_date date;
     std::string source_account, dest_account;
     float ammount;
 };
 
+inline bool operator==(const record::r_date& lhs, const record::r_date& rhs)
+{
+    return lhs.year == rhs.year &&
+           lhs.month == rhs.month &&
+           lhs.day == rhs.day &&
+           lhs.hour == rhs.hour &&
+           lhs.minutes == rhs.minutes &&
+           lhs.seconds == rhs.seconds;
+}
+
+inline bool operator!=(const record::r_date& lhs, const record::r_date& rhs)
+{
+    return not (lhs == rhs);
+}
+
 inline bool operator==(const record& lhs, const record& rhs)
 {
-    return lhs.date.year == rhs.date.year &&
-           lhs.date.month == rhs.date.month &&
-           lhs.date.day == rhs.date.day &&
-           lhs.date.hour == rhs.date.hour &&
-           lhs.date.minutes == rhs.date.minutes &&
-           lhs.date.seconds == rhs.date.seconds &&
+    return lhs.date == rhs.date &&
            lhs.source_account == rhs.source_account &&
            lhs.dest_account == rhs.dest_account &&
            lhs.ammount == rhs.ammount;
@@ -41,6 +52,8 @@ inline bool operator!=(const record& lhs, const record& rhs)
 }
 
 std::ostream& operator <<(std::ostream& str, const record& r);
+
+std::ostream& operator <<(std::ostream& str, const record::r_date& d);
 
 } // namespace csv_parser
 

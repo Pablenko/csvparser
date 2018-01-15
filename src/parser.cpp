@@ -1,29 +1,55 @@
-#include <regex>
+#include <cstdlib>
 #include <iostream>
+#include <regex>
+#include <sstream>
 
 #include "parser.hpp"
 
 namespace csv_parser
 {
 
-record parse_line(std::string line)
+void parse_date(const std::string& str, record::r_date& d)
 {
-    std::regex date_re("[0-9]{4}.[0-9]{2}.[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}");
-    std::regex account_re("[0-9]{2}(\\s[0-9]{4}){6}");
-    std::smatch match_result;
+    char sink;
+    std::stringstream ss(str);
 
-    if(std::regex_search(line, match_result, date_re))
+    ss >> d.year >> sink >> d.month >> sink >> d.day >> sink >> 
+          d.hour >> sink >> d.minutes >> sink >> d.seconds;
+}
+
+unsigned int parse_account_number(const std::string& str, std::string& acc)
+{
+    unsigned int colon_pos = str.find(",");
+    acc = str.substr(0, colon_pos);
+    return colon_pos;
+}
+
+void parse_float(const std::string& str, float& f)
+{
+    f = std::atof(str.c_str());
+}
+
+std::optional<record> parse_line(std::string line)
+{
+    const unsigned int first_acc_pos = 21;
+    const unsigned int colon_ws_size = 2;
+
+    std::regex csv_line_re("[0-9]{4}.[0-9]{2}.[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}, [0-9]{2}(\\s?[0-9]{4}){6}, [0-9]{2}(\\s?[0-9]{4}){6}, [0-9]+.[0-9]+");
+    std::smatch _;
+
+    if(std::regex_search(line, _, csv_line_re))
     {
-        std::cout << match_result.str() << "\n";
+        record r;
+        parse_date(line, r.date);
+        unsigned int second_acc_pos = parse_account_number(line.substr(first_acc_pos), r.source_account);
+        unsigned int float_pos = parse_account_number(line.substr(first_acc_pos+second_acc_pos+colon_ws_size), r.dest_account);
+        parse_float(line.substr(first_acc_pos+second_acc_pos+float_pos+2*colon_ws_size), r.ammount);
+        return std::make_optional(r);
     }
-
-    while(std::regex_search(line, match_result, account_re))
+    else
     {
-        std::cout << match_result.str() << "\n";
-        line = match_result.suffix();
+        return {};
     }
-
-    return record();
 }
 
 } // namespace csv_reader
