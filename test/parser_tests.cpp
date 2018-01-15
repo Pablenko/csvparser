@@ -79,6 +79,15 @@ TEST(parser_tests, parse_date_test)
     EXPECT_EQ(expected_date, actual_date);
 }
 
+TEST(parser_tests, parse_account_number_test)
+{
+    std::string actual;
+    unsigned int pos = parse_account_number(std::string("112222 33334444 5555 6666 7777,"), actual);
+
+    EXPECT_EQ(std::string("112222 33334444 5555 6666 7777"), actual);
+    EXPECT_EQ(std::string("112222 33334444 5555 6666 7777").length(), pos);
+}
+
 TEST(parser_tests, parse_line_test)
 {
     std::string input = "2016.11.02T13:15:24, 11 2222 3333 4444 5555 6666 7777, 77 6666 5555 4444 3333 2222 1111, 21.41";
@@ -119,6 +128,15 @@ TEST(parser_test, empty_optional_for_wrong_account_number_format)
     EXPECT_FALSE(ret1.has_value());
     EXPECT_FALSE(ret2.has_value());
     EXPECT_FALSE(ret3.has_value());
+}
+
+TEST(parser_test, corrupted_line_is_ignored)
+{
+    auto ret1 = parse_line(std::string("a2016.11.02T13:15:24, 11 2222 3333 4444 5555 6666 7777, 77 6666 5555 4444 3333 2222 1111, 21.41"));
+    auto ret2 = parse_line(std::string("2016.11.02T13:15:24, 11 2222 3333 4444 5555 6666 7777, 77 6666 5555 4444 3333 2222 1111, 21.41$"));
+
+    EXPECT_FALSE(ret1.has_value());
+    EXPECT_FALSE(ret2.has_value());
 }
 
 } // namespace csv_parser

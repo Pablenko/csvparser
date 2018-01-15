@@ -35,9 +35,11 @@ std::optional<record> parse_line(std::string line)
     const unsigned int colon_ws_size = 2;
 
     std::regex csv_line_re("[0-9]{4}.[0-9]{2}.[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}, [0-9]{2}(\\s?[0-9]{4}){6}, [0-9]{2}(\\s?[0-9]{4}){6}, [0-9]+.[0-9]+");
-    std::smatch _;
+    std::smatch match_result;
 
-    if(std::regex_search(line, _, csv_line_re))
+    bool ret = std::regex_search(line, match_result, csv_line_re);
+
+    if(ret && match_result.str().length() == line.length())
     {
         record r;
         parse_date(line, r.date);
