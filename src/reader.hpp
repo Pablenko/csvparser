@@ -17,7 +17,7 @@ class file_reader
 {
 public:
     file_reader(const std::experimental::filesystem::path& path, std::queue<std::string>& sink) :
-        source(path), sink(sink), path(path), last_time_write()
+        source(path), last_pos(0), sink(sink), path(path), last_time_write()
     {}
 
     void read();
@@ -26,6 +26,7 @@ public:
 
 private:
     std::ifstream source;
+    unsigned int last_pos;
     std::queue<std::string>& sink;
     std::experimental::filesystem::path path;
     std::experimental::filesystem::file_time_type last_time_write;

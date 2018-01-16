@@ -25,12 +25,14 @@ void file_reader_thread(std::mutex& m, std::condition_variable& cv, const fs::pa
 
 void file_reader::read()
 {
-    source.clear();
-    source.seekg(0, std::ios::beg);
+    source.seekg(last_pos, std::ios::beg);
     for(std::string line; std::getline(source, line); )
     {
         sink.push(std::move(line));
     }
+    source.clear();
+    source.seekg(0, std::ios::end);
+    last_pos = source.tellg();
 }
 
 bool file_reader::ready()
