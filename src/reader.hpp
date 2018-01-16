@@ -26,7 +26,7 @@ public:
 
 private:
     std::ifstream source;
-    unsigned int last_pos;
+    unsigned long int last_pos;
     std::queue<std::string>& sink;
     std::experimental::filesystem::path path;
     std::experimental::filesystem::file_time_type last_time_write;

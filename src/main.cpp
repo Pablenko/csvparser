@@ -1,13 +1,10 @@
 #include <chrono>
 #include <cstdlib>
 #include <experimental/filesystem>
-#include <queue>
-#include <iostream>
 #include <thread>
 #include <mutex>
 #include <memory>
 #include <condition_variable>
-#include <vector>
 
 #include "calculator.hpp"
 #include "common.hpp"
@@ -17,7 +14,7 @@
 
 namespace fs = std::experimental::filesystem;
 
-int main(int argc, char** argv)
+int main(int argc, const char** argv)
 {
     fs::path file_location = csv_parser::parse_user_input(argc, argv);
 
@@ -44,15 +41,9 @@ int main(int argc, char** argv)
 
         create_report = !data.empty();
 
-        while(!data.empty())
+        for(const auto& elem : csv_parser::transform_queue(data))
         {
-            auto& line = data.front();
-            auto opt_record = csv_parser::parse_line(line);
-            if(opt_record.has_value())
-            {
-                calculator.update_report(*opt_record);
-            }
-            data.pop();
+            calculator.update_report(elem);
         }
 
         if(create_report)

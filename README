@@ -1,0 +1,14 @@
+Requirements:
+    cmake
+    googletest
+    C++ compiler with c++17 support
+
+Build and run:
+    mkdir build
+    cd build/
+    cmake ..
+    make
+    ./test/csv_parser_tests
+    ./src/csv_parser ../test_file.csv
+
+Tested with gcc 7.2
