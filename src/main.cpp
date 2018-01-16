@@ -5,13 +5,15 @@
 #include <iostream>
 #include <thread>
 #include <mutex>
+#include <memory>
 #include <condition_variable>
 #include <vector>
 
+#include "calculator.hpp"
 #include "common.hpp"
 #include "parser.hpp"
 #include "reader.hpp"
-#include "calculator.hpp"
+#include "reporter.hpp"
 
 namespace fs = std::experimental::filesystem;
 
@@ -31,12 +33,16 @@ int main(int argc, char** argv)
     csv_parser::record_calculator calculator;
 
     std::thread t(csv_parser::file_reader_thread, std::ref(m), std::ref(cv), file_location, std::ref(data));
+    bool create_report = false;
+    std::unique_ptr<csv_parser::reporter> reporter(new csv_parser::console_reporter());
 
     while(1)
     {
         std::unique_lock<std::mutex> lock(m);
         auto now = std::chrono::system_clock::now();
         cv.wait_until(lock, now + std::chrono::seconds(1), [&]() { return !data.empty(); });
+
+        create_report = !data.empty();
 
         while(!data.empty())
         {
@@ -49,10 +55,9 @@ int main(int argc, char** argv)
             data.pop();
         }
 
-        std::cout << "NEW AMOUNT: " << calculator.get_new_amount() << "\n";
-        for(const auto& elem : calculator.get_summary())
+        if(create_report)
         {
-            std::cout << elem.first << " " << elem.second << "\n";
+            reporter->report(calculator.get_new_amount(), calculator.get_summary());
         }
 
         lock.unlock();
