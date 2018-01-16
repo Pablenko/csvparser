@@ -6,11 +6,12 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <vector>
 
 #include "common.hpp"
 #include "parser.hpp"
 #include "reader.hpp"
-#include "reporter.hpp"
+#include "calculator.hpp"
 
 namespace fs = std::experimental::filesystem;
 
@@ -27,6 +28,7 @@ int main(int argc, char** argv)
     std::queue<std::string> data;
     std::mutex m;
     std::condition_variable cv;
+    csv_parser::record_calculator calculator;
 
     std::thread t(csv_parser::file_reader_thread, std::ref(m), std::ref(cv), file_location, std::ref(data));
 
@@ -38,9 +40,19 @@ int main(int argc, char** argv)
 
         while(!data.empty())
         {
-            std::string& elem = data.front();
-            std::cout << elem << "\n";
+            auto& line = data.front();
+            auto opt_record = csv_parser::parse_line(line);
+            if(opt_record.has_value())
+            {
+                calculator.update_report(*opt_record);
+            }
             data.pop();
+        }
+
+        std::cout << "NEW AMOUNT: " << calculator.get_new_amount() << "\n";
+        for(const auto& elem : calculator.get_summary())
+        {
+            std::cout << elem.first << " " << elem.second << "\n";
         }
 
         lock.unlock();

@@ -16,7 +16,7 @@ unsigned int parse_account_number(const std::string& str, std::string& acc);
 
 void parse_float(const std::string& str, float& f);
 
-std::optional<record> parse_line(std::string line);
+std::optional<record> parse_line(const std::string& line);
 
 } // namespace csv_parser
 

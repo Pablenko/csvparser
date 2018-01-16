@@ -29,7 +29,7 @@ void parse_float(const std::string& str, float& f)
     f = std::atof(str.c_str());
 }
 
-std::optional<record> parse_line(std::string line)
+std::optional<record> parse_line(const std::string& line)
 {
     const unsigned int first_acc_pos = 21;
     const unsigned int colon_ws_size = 2;
