@@ -130,6 +130,15 @@ TEST(parser_test, empty_optional_for_wrong_account_number_format)
     EXPECT_FALSE(ret3.has_value());
 }
 
+TEST(parser_test, empty_optional_for_wrong_float_number_format)
+{
+    auto ret1 = parse_line(std::string("2016.11.02T13:15:24, 11 2222 3333 5555 6666 7777, 77 6666 5555 4444 3333 2222 1111, 41"));
+    auto ret2 = parse_line(std::string("2016.11.02T13:15:24, 11 2222 3333 4444 5555 6666 77778, 77 6666 5555 4444 3333 2222 1111, 21."));
+
+    EXPECT_FALSE(ret1.has_value());
+    EXPECT_FALSE(ret2.has_value());
+}
+
 TEST(parser_test, corrupted_line_is_ignored)
 {
     auto ret1 = parse_line(std::string("a2016.11.02T13:15:24, 11 2222 3333 4444 5555 6666 7777, 77 6666 5555 4444 3333 2222 1111, 21.41"));

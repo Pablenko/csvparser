@@ -54,4 +54,4 @@ std::optional<record> parse_line(std::string line)
     }
 }
 
-} // namespace csv_reader
+} // namespace csv_parser
